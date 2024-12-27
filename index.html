@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Tester</title>
+    <!--   created by 787579 -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #333;
+        }
+        #text-display {
+            margin: 20px auto;
+            padding: 15px;
+            width: 80%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        #typing-area {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #results {
+            margin: 20px auto;
+            color: #555;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #time-options {
+            margin: 20px auto;
+        }
+        #time-options label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Typing Speed Tester</h1>
+    <div id="time-options">
+        <label><input type="radio" name="time-limit" value="30" checked> 30 Seconds</label>
+        <label><input type="radio" name="time-limit" value="60"> 1 Minute</label>
+    </div>
+    <div id="text-display">
+        "The quick brown fox jumps over the lazy dog."
+    </div>
+    <textarea id="typing-area" rows="5" placeholder="Start typing here..."></textarea>
+    <div id="results">
+        <p>Time: <span id="time">0</span> seconds</p>
+        <p>WPM: <span id="wpm">0</span></p>
+        <p>Accuracy: <span id="accuracy">0</span>%</p>
+    </div>
+    <button id="start-button">Start</button>
+    <button id="change-text-button">Change Text</button>
+    <script>
+        const textDisplay = document.getElementById('text-display');
+        const typingArea = document.getElementById('typing-area');
+        const timeDisplay = document.getElementById('time');
+        const wpmDisplay = document.getElementById('wpm');
+        const accuracyDisplay = document.getElementById('accuracy');
+        const startButton = document.getElementById('start-button');
+        const changeTextButton = document.getElementById('change-text-button');
+        const timeOptions = document.getElementsByName('time-limit');
+
+        let startTime, timerInterval, timeLimit;
+        const sampleTexts = [
+            "The quick brown fox jumps over the lazy dog.",
+            "A journey of a thousand miles begins with a single step.",
+            "To be or not to be, that is the question.",
+            "All that glitters is not gold.",
+            "The only thing necessary for the triumph of evil is the silence of good.",
+            "Stimulate your mind as you test your typing speed with this standard English paragraph typing test. Watch your typing speed and accuracy increase as you learn about a variety of new topics! Over 40 typing test selections available.",
+            "The world is a book, and those who do not travel read only one page.",
+            "The best way to predict the future is to invent it.",
+            "The only limit to our realization of tomorrow will be our doubts of today.",
+            "The future belongs to those who believe in the beauty of their dreams.",
+            "The greatest glory in living lies not in never falling, but in rising every time we fall."
+
+
+        ];
+
+        function getTimeLimit() {
+            for (const option of timeOptions) {
+                if (option.checked) {
+                    return parseInt(option.value, 10);
+                }
+            }
+            return 30; // Default to 30 seconds
+        }
+
+        function startTest() {
+            typingArea.value = '';
+            typingArea.disabled = false;
+            typingArea.focus();
+            startTime = new Date();
+            timeLimit = getTimeLimit();
+            timerInterval = setInterval(updateTime, 1000);
+            startButton.disabled = true;
+        }
+
+        function updateTime() {
+            const currentTime = new Date();
+            const timeElapsed = Math.floor((currentTime - startTime) / 1000);
+            timeDisplay.textContent = timeElapsed;
+
+            if (timeElapsed >= timeLimit) {
+                endTest();
+            }
+        }
+
+        function endTest() {
+            clearInterval(timerInterval);
+            const timeElapsed = Math.min(Math.floor((new Date() - startTime) / 1000), timeLimit);
+            const typedText = typingArea.value;
+            const originalText = textDisplay.textContent;
+            const wordsTyped = typedText.split(' ').length;
+            const correctChars = typedText.split('').filter((char, index) => char === originalText[index]).length;
+            const accuracy = ((correctChars / originalText.length) * 100).toFixed(2);
+
+            const wpm = ((wordsTyped / timeElapsed) * 60).toFixed(2);
+
+            wpmDisplay.textContent = wpm;
+            accuracyDisplay.textContent = accuracy;
+
+            startButton.disabled = false;
+            typingArea.disabled = true;
+        }
+
+        function changeText() {
+            const randomIndex = Math.floor(Math.random() * sampleTexts.length);
+            textDisplay.textContent = sampleTexts[randomIndex];
+        }
+
+        startButton.addEventListener('click', startTest);
+        changeTextButton.addEventListener('click', changeText);
+    </script>
+</body>
+</html>
